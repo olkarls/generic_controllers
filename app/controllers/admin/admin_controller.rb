@@ -1,6 +1,8 @@
 class Admin::AdminController < ApplicationController
   before_filter :get_klass
   before_filter :finder, :except => [:index, :new, :create]
+  before_filter :init_instance, :only => [:new]
+  before_filter :init_instance_on_create, :only => [:create]
   before_filter :index_finder, :only => [:index]
   layout "admin"
   
@@ -8,15 +10,12 @@ class Admin::AdminController < ApplicationController
   end
   
   def new
-    instance_variable_set "@#{@klass.to_s.downcase}", @klass.new
   end
   
-  def show    
+  def show
   end
 
   def create
-    instance_variable_set "@#{@klass.to_s.downcase}", @klass.new(params["#{@klass.to_s.downcase.intern}"])
-    
     respond_to do |format|
       if instance_variable_get("@#{@klass.to_s.downcase}").save
         flash[:success] = I18n.translate("#{@klass.to_s.downcase.intern}") + " " + I18n.translate(:was_successfully_created)
@@ -68,6 +67,14 @@ class Admin::AdminController < ApplicationController
     else
       instance_variable_set "@#{@klass.to_s.downcase}", @klass.find(params[:id])
     end
+  end
+  
+  def init_instance
+    instance_variable_set "@#{@klass.to_s.downcase}", @klass.new
+  end
+  
+  def init_instance_on_create
+    instance_variable_set "@#{@klass.to_s.downcase}", @klass.new(params["#{@klass.to_s.downcase.intern}"])
   end
 
   def get_klass
