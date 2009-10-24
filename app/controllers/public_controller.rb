@@ -2,9 +2,7 @@ class PublicController < ApplicationController
   before_filter :get_klass
   before_filter :finder, :except => [:index, :new, :create]
   before_filter :collection_finder, :only => [:index]
-  before_filter :current_menu_item
-  before_filter :submenu_items
-  
+    
   def index    
   end
   
