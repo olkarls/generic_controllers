@@ -1,4 +1,5 @@
 class Admin::AdminController < ApplicationController
+  before_filter { |c| c.authorize :editor }
   before_filter :get_klass
   before_filter :finder, :except => [:index, :new, :create]
   before_filter :init_instance, :only => [:new]
@@ -19,7 +20,7 @@ class Admin::AdminController < ApplicationController
     respond_to do |format|
       if instance_variable_get("@#{@klass.to_s.downcase}").save
         flash[:success] = I18n.translate("#{@klass.to_s.downcase.intern}") + " " + I18n.translate(:was_successfully_created)
-        format.html { redirect_to :action => 'index' }
+        format.html { redirect_to eval("edit_admin_#{@klass.to_s.downcase}_path(@#{@klass.to_s.downcase})") }
       else
         format.html { render :action => "new" }
       end
@@ -33,14 +34,14 @@ class Admin::AdminController < ApplicationController
     respond_to do |format|
       if instance_variable_get("@#{@klass.to_s.downcase}").update_attributes(params["#{@klass.to_s.downcase.intern}"])
         flash[:success] = I18n.translate("#{@klass.to_s.downcase.intern}") + " " + I18n.translate(:was_successfully_updated)
-        format.html { redirect_to :action => 'index' }
+        format.html { redirect_to eval("edit_admin_#{@klass.to_s.downcase}_path(@#{@klass.to_s.downcase})") }
       else
         format.html { render :action => "edit" }
       end
     end
   end
   
-  def confirm_destruction    
+  def confirm_destruction
   end
   
   def destroy
