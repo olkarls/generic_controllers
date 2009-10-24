@@ -3,7 +3,6 @@ class PublicController < ApplicationController
   before_filter :finder, :except => [:index, :new, :create]
   before_filter :collection_finder, :only => [:index]
   before_filter :current_menu_item
-  before_filter :init_menu
   before_filter :submenu_items
   
   def index    
@@ -43,14 +42,6 @@ class PublicController < ApplicationController
 
   def collection_name
     @klass.to_s.pluralize.downcase
-  end
-  
-  def init_menu
-    @topmenu_items = MenuItem.find_by_parent_id(nil)
-  end
-  
-  def current_menu_item
-    @current_menu_item = MenuItem.new(:url_parameters => params)
   end
   
   def submenu_items
