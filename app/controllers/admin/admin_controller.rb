@@ -20,7 +20,7 @@ class Admin::AdminController < ApplicationController
     respond_to do |format|
       if instance_variable_get("@#{@klass.to_s.downcase}").save
         flash[:success] = I18n.translate("#{@klass.to_s.downcase.intern}") + " " + I18n.translate(:was_successfully_created)
-        format.html { redirect_to eval("edit_admin_#{@klass.to_s.downcase}_path(@#{@klass.to_s.downcase})") }
+        format.html { redirect_to eval("admin_#{collection_name}_path") }
       else
         format.html { render :action => "new" }
       end
@@ -34,7 +34,7 @@ class Admin::AdminController < ApplicationController
     respond_to do |format|
       if instance_variable_get("@#{@klass.to_s.downcase}").update_attributes(params["#{@klass.to_s.downcase.intern}"])
         flash[:success] = I18n.translate("#{@klass.to_s.downcase.intern}") + " " + I18n.translate(:was_successfully_updated)
-        format.html { redirect_to eval("edit_admin_#{@klass.to_s.downcase}_path(@#{@klass.to_s.downcase})") }
+        format.html { redirect_to eval("admin_#{collection_name}_path") }
       else
         format.html { render :action => "edit" }
       end
@@ -79,7 +79,7 @@ class Admin::AdminController < ApplicationController
   end
 
   def get_klass
-    klass_name = controller_name.to_s.singularize.titlecase.gsub(' ','')
+    klass_name = controller_name.to_s.singularize.titlecase.gsub(' ', '')
     begin
       if Kernel.const_get(klass_name)
         @klass = klass_name.constantize

@@ -2,11 +2,12 @@ class PublicController < ApplicationController
   before_filter :get_klass
   before_filter :finder, :except => [:index, :new, :create]
   before_filter :collection_finder, :only => [:index]
-    
-  def index    
+  before_filter :init_menu
+  
+  def index
   end
   
-  def show    
+  def show
   end
   
   private
@@ -42,7 +43,13 @@ class PublicController < ApplicationController
     @klass.to_s.pluralize.downcase
   end
   
-  def submenu_items
-    
+  private
+  
+  def init_menu
+    @current_menuitem = MenuItem.find_by_url(request.request_uri)
+    @topmenu_items = MenuItem.find_all.select {|item| item.parent_id == nil }
+    unless @current_menuitem.blank?
+      @submenu_items = @current_menuitem.absolute_parent.children
+    end
   end
 end
